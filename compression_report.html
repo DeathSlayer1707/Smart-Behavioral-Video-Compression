@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SentioMind · Smart Compression Report</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface2: #263347;
+    --accent: #0ea5e9;
+    --accent2: #38bdf8;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --purple: #a78bfa;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: #334155;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #0c1a2e 0%, #0f2744 50%, #0c1a2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 60% 50%, rgba(14,165,233,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-inner { position: relative; max-width: 1100px; margin: auto; }
+  .logo-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--accent), #6366f1);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .brand { font-size: 1.05rem; font-weight: 700; color: var(--accent); letter-spacing: 0.5px; }
+  .brand span { color: var(--text); font-weight: 400; }
+  h1 { font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1.2; }
+  h1 em { font-style: normal; color: var(--accent); }
+  .subtitle { color: var(--muted); font-size: 0.88rem; margin-top: 8px; }
+  .badge-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .badge {
+    font-size: 0.72rem; font-weight: 600; padding: 4px 10px;
+    border-radius: 99px; border: 1px solid;
+    letter-spacing: 0.3px;
+  }
+  .badge-blue  { color: var(--accent);  border-color: var(--accent);  background: rgba(14,165,233,0.1); }
+  .badge-green { color: var(--green);   border-color: var(--green);   background: rgba(34,197,94,0.1); }
+  .badge-yellow{ color: var(--yellow);  border-color: var(--yellow);  background: rgba(245,158,11,0.1); }
+
+  /* ── Layout ── */
+  .content { max-width: 1100px; margin: 0 auto; padding: 32px 40px 0; }
+
+  /* ── Section ── */
+  .section { margin-bottom: 28px; }
+  .section-title {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 1.2px;
+    color: var(--muted); text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* ── Stat Cards ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 18px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s;
+  }
+  .stat-card:hover { transform: translateY(-2px); }
+  .stat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .stat-card.accent::before  { background: var(--accent); }
+  .stat-card.green::before   { background: var(--green); }
+  .stat-card.red::before     { background: var(--red); }
+  .stat-card.yellow::before  { background: var(--yellow); }
+  .stat-card.purple::before  { background: var(--purple); }
+  .stat-val { font-size: 2rem; font-weight: 800; line-height: 1; }
+  .stat-val.accent { color: var(--accent); }
+  .stat-val.green  { color: var(--green); }
+  .stat-val.red    { color: var(--red); }
+  .stat-val.yellow { color: var(--yellow); }
+  .stat-val.purple { color: var(--purple); }
+  .stat-label { color: var(--muted); font-size: 0.72rem; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-sub   { color: var(--muted); font-size: 0.68rem; margin-top: 4px; }
+
+  /* ── Progress Bars ── */
+  .bar-section { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media(max-width:700px) { .bar-section { grid-template-columns: 1fr; } }
+  .bar-group { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .bar-group h3 { font-size: 0.82rem; color: var(--text); margin-bottom: 16px; font-weight: 600; }
+  .bar-item { margin-bottom: 12px; }
+  .bar-item:last-child { margin-bottom: 0; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .bar-label { font-size: 0.75rem; color: var(--muted); width: 80px; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 20px; background: #1a2840; border-radius: 4px; overflow: hidden; }
+  .bar-fill  { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 0.68rem; font-weight: 700; color: #fff; transition: width 0.6s ease; }
+  .bar-val   { font-size: 0.72rem; color: var(--muted); width: 55px; flex-shrink: 0; text-align: right; }
+
+  /* ── Canvas Charts ── */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media(max-width:700px) { .chart-grid { grid-template-columns: 1fr; } }
+  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .chart-card h3 { font-size: 0.82rem; font-weight: 600; margin-bottom: 14px; color: var(--text); }
+  canvas { display: block; width: 100% !important; }
+
+  /* ── Algorithm Steps ── */
+  .algo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+  .algo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .algo-step {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 1px;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 6px;
+  }
+  .algo-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; }
+  .algo-desc  { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
+  .algo-pill  {
+    display: inline-block; margin-top: 8px;
+    font-size: 0.65rem; font-weight: 600; padding: 2px 8px;
+    border-radius: 99px; background: rgba(14,165,233,0.15); color: var(--accent);
+  }
+
+  /* ── Storyboard ── */
+  .storyboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .sb-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: default;
+    transition: transform 0.12s;
+  }
+  .sb-card:hover { transform: scale(1.04); z-index: 2; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+  .sb-img {
+    width: 100%; aspect-ratio: 16/9;
+    background: #0f172a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; color: var(--border);
+    position: relative;
+  }
+  .sb-img-actual { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sb-badge {
+    position: absolute; top: 5px; right: 5px;
+    font-size: 0.58rem; font-weight: 700; padding: 2px 6px;
+    border-radius: 99px; text-transform: uppercase;
+  }
+  .reason-face    { background: rgba(239,68,68,0.9);  color: #fff; }
+  .reason-motion  { background: rgba(14,165,233,0.9); color: #fff; }
+  .reason-context { background: rgba(34,197,94,0.9);  color: #fff; }
+  .sb-meta {
+    padding: 6px 8px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.65rem; color: var(--muted);
+  }
+  .sb-ts { font-weight: 600; color: var(--text); }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  thead th {
+    background: var(--surface2); color: var(--accent);
+    padding: 10px 12px; text-align: left;
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.5px;
+    position: sticky; top: 0; z-index: 1;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:hover td { background: rgba(14,165,233,0.04); }
+  td { padding: 8px 12px; color: var(--text); }
+  .reason-chip {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 99px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+  }
+  .scrollable-table { max-height: 360px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center; color: var(--muted); font-size: 0.72rem;
+    margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════ HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="logo-row">
+      <div class="logo-icon">🧠</div>
+      <div>
+        <div class="brand">Sentio<span>Mind</span></div>
+      </div>
+    </div>
+    <h1>Smart Behavioral <em>Video Compression</em> Report</h1>
+    <p class="subtitle">pHash · Optical Flow · Haar Face Detection · H.264 Re-encoding @ 12 fps</p>
+    <div class="badge-row">
+      <span class="badge badge-green">≥70% Reduction Target</span>
+      <span class="badge badge-blue">4× Real-time Speed</span>
+      <span class="badge badge-yellow">Offline Report · No CDN</span>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════════════════════════════════════════ STAT CARDS -->
+<div class="section">
+  <div class="section-title">Compression Summary</div>
+  <div class="stat-grid">
+    <div class="stat-card green">
+      <div class="stat-val green" id="s-reduction">86.5%</div>
+      <div class="stat-label">File Size Reduction</div>
+      <div class="stat-sub">Target ≥ 70%</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-val red" id="s-orig">—</div>
+      <div class="stat-label">Original Size</div>
+    </div>
+    <div class="stat-card accent">
+      <div class="stat-val accent" id="s-comp">—</div>
+      <div class="stat-label">Compressed Size</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-val yellow" id="s-speed">8×</div>
+      <div class="stat-label">Processing Speed</div>
+      <div class="stat-sub">Real-time factor</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-val purple" id="s-kept">486</div>
+      <div class="stat-label">Frames Kept</div>
+      <div class="stat-sub" id="s-total">of 3,600 total</div>
+    </div>
+    <div class="stat-card accent">
+      <div class="stat-val accent" id="s-dur">120s</div>
+      <div class="stat-label">Source Duration</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ PROGRESS BARS -->
+<div class="section">
+  <div class="section-title">Breakdown</div>
+  <div class="bar-section">
+
+    <div class="bar-group">
+      <h3>Frame Retention by Reason</h3>
+      <div class="bar-item">
+        <div class="bar-row">
+          <span class="bar-label">👤 Face</span>
+          <div class="bar-track"><div class="bar-fill" id="bar-face" style="width:0%;background:#ef4444"></div></div>
+          <span class="bar-val" id="bv-face">–</span>
+        </div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-row">
+          <span class="bar-label">💨 Motion</span>
+          <div class="bar-track"><div class="bar-fill" id="bar-motion" style="width:0%;background:#0ea5e9"></div></div>
+          <span class="bar-val" id="bv-motion">–</span>
+        </div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-row">
+          <span class="bar-label">🎞 Context</span>
+          <div class="bar-track"><div class="bar-fill" id="bar-context" style="width:0%;background:#22c55e"></div></div>
+          <span class="bar-val" id="bv-context">–</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bar-group">
+      <h3>File Size Comparison</h3>
+      <div class="bar-item">
+        <div class="bar-row">
+          <span class="bar-label">Original</span>
+          <div class="bar-track"><div class="bar-fill" style="width:100%;background:#ef4444" id="bar-orig-fill">100%</div></div>
+          <span class="bar-val" id="bv-orig">—</span>
+        </div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-row">
+          <span class="bar-label">Compressed</span>
+          <div class="bar-track"><div class="bar-fill" id="bar-comp-fill" style="width:0%;background:#22c55e"></div></div>
+          <span class="bar-val" id="bv-comp">—</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ ALGORITHM -->
+<div class="section">
+  <div class="section-title">Algorithm Pipeline</div>
+  <div class="algo-grid">
+    <div class="algo-card">
+      <div class="algo-step">Step 1</div>
+      <div class="algo-title">Perceptual Hash</div>
+      <div class="algo-desc">Compute pHash for each frame. Drop if &gt;95% similar to last kept frame (near-duplicate elimination).</div>
+      <span class="algo-pill">imagehash.phash()</span>
+    </div>
+    <div class="algo-card">
+      <div class="algo-step">Step 2</div>
+      <div class="algo-title">Optical Flow Score</div>
+      <div class="algo-desc">Dense Farneback optical flow. Discard if mean magnitude &lt; 0.05 (static, empty scene).</div>
+      <span class="algo-pill">cv2.calcOpticalFlowFarneback</span>
+    </div>
+    <div class="algo-card">
+      <div class="algo-step">Step 3</div>
+      <div class="algo-title">Haar Face Detection</div>
+      <div class="algo-desc">Keep frame regardless of motion score if ≥1 face detected. Never lose a human event.</div>
+      <span class="algo-pill">haarcascade_frontalface</span>
+    </div>
+    <div class="algo-card">
+      <div class="algo-step">Step 4</div>
+      <div class="algo-title">Context Frame</div>
+      <div class="algo-desc">Force-keep one frame every 3 seconds minimum. Prevents complete timeline gaps in static scenes.</div>
+      <span class="algo-pill">Interval: 3s</span>
+    </div>
+    <div class="algo-card">
+      <div class="algo-step">Step 5</div>
+      <div class="algo-title">H.264 Re-encode</div>
+      <div class="algo-desc">Surviving frames dumped as PNGs then piped to ffmpeg libx264 CRF-23 at 12 fps output.</div>
+      <span class="algo-pill">ffmpeg -c:v libx264</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ CHARTS -->
+<div class="section">
+  <div class="section-title">Analytics</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>📊 Motion Score Over Time (kept frames)</h3>
+      <canvas id="motionChart" height="160"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>🥧 Keep Reason Distribution</h3>
+      <canvas id="pieChart" height="160"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ STORYBOARD -->
+<div class="section">
+  <div class="section-title">Storyboard (Sample Kept Frames)</div>
+  <div class="storyboard" id="storyboard">
+    <!-- Generated by JS below -->
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ TABLE -->
+<div class="section">
+  <div class="section-title">Full Frame Log</div>
+  <div class="scrollable-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Frame #</th>
+          <th>Time (s)</th>
+          <th>Reason</th>
+          <th>Motion Score</th>
+          <th>pHash Sim</th>
+          <th>Face</th>
+        </tr>
+      </thead>
+      <tbody id="frame-table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<div class="footer">
+  SentioMind Smart Behavioral Video Compression &nbsp;·&nbsp; Offline Report &nbsp;·&nbsp; Generated automatically
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// DATA  — replace this block with actual pipeline output when running solution.py
+// ─────────────────────────────────────────────────────────────────────────────
+const REPORT_DATA = {
+  source_video: { fps: 30, total_frames: 3600, duration_sec: 120, width: 1280, height: 720 },
+  compression:  { frames_in: 3600, frames_out: 486, reduction_pct: 86.5, output_fps: 12 },
+  orig_bytes:   524288000,   // ~500 MB demo value
+  comp_bytes:   70778880,    // ~67.5 MB demo value
+  processing_sec: 15.2,
+  segments: (function(){
+    // Simulate realistic segment data for the demo report
+    var segs = [];
+    var reasons = ['face','motion','motion','motion','context'];
+    var t = 0, fps = 30;
+    for(var i = 0; i < 486; i++){
+      var r = reasons[Math.floor(Math.random()*reasons.length)];
+      var motion = r==='context' ? Math.random()*0.04 : (Math.random()*0.5+0.05);
+      var sim    = r==='context' ? Math.random()*0.03+0.95 : Math.random()*0.9;
+      var face   = r==='face';
+      var fi = Math.floor(t * fps);
+      segs.push({
+        frame_index: fi,
+        timestamp_sec: Math.round(t*100)/100,
+        keep_reason: r,
+        motion_score: Math.round(motion*10000)/10000,
+        phash_similar: Math.round(sim*1000)/1000,
+        face_detected: face
+      });
+      t += (120/486) + (Math.random()-0.5)*0.1;
+    }
+    return segs;
+  })()
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UTILITIES
+// ─────────────────────────────────────────────────────────────────────────────
+function humanBytes(n){
+  var u=['B','KB','MB','GB'];
+  for(var i=0;i<u.length;i++){ if(n<1024||i===u.length-1) return n.toFixed(1)+' '+u[i]; n/=1024; }
+}
+function reasonColor(r){ return {face:'#ef4444',motion:'#0ea5e9',context:'#22c55e'}[r]||'#888'; }
+function reasonClass(r){ return 'reason-'+r; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// POPULATE STAT CARDS
+// ─────────────────────────────────────────────────────────────────────────────
+var d = REPORT_DATA;
+document.getElementById('s-reduction').textContent = d.compression.reduction_pct + '%';
+document.getElementById('s-orig').textContent = humanBytes(d.orig_bytes);
+document.getElementById('s-comp').textContent = humanBytes(d.comp_bytes);
+document.getElementById('s-speed').textContent = Math.round(d.source_video.duration_sec/d.processing_sec)+'×';
+document.getElementById('s-kept').textContent  = d.compression.frames_out.toLocaleString();
+document.getElementById('s-total').textContent = 'of '+d.compression.frames_in.toLocaleString()+' total';
+document.getElementById('s-dur').textContent   = d.source_video.duration_sec+'s';
+document.getElementById('bv-orig').textContent = humanBytes(d.orig_bytes);
+document.getElementById('bv-comp').textContent = humanBytes(d.comp_bytes);
+var compPct = Math.round(100*(1 - d.comp_bytes/d.orig_bytes));
+document.getElementById('bar-comp-fill').style.width = (100-compPct)+'%';
+document.getElementById('bar-comp-fill').textContent = (100-compPct)+'%';
+
+// Reason counts
+var counts = {face:0,motion:0,context:0};
+d.segments.forEach(function(s){ counts[s.keep_reason]++; });
+var total = d.segments.length;
+['face','motion','context'].forEach(function(r){
+  var pct = Math.round(100*counts[r]/total);
+  document.getElementById('bar-'+r).style.width = pct+'%';
+  document.getElementById('bar-'+r).textContent = pct+'%';
+  document.getElementById('bv-'+r).textContent = counts[r]+' frames';
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STORYBOARD
+// ─────────────────────────────────────────────────────────────────────────────
+var sb = document.getElementById('storyboard');
+var step = Math.max(1, Math.floor(d.segments.length/24));
+for(var i=0;i<d.segments.length;i+=step){
+  var s = d.segments[i];
+  var card = document.createElement('div');
+  card.className = 'sb-card';
+  card.innerHTML = `
+    <div class="sb-img">
+      <svg width="140" height="79" viewBox="0 0 140 79" xmlns="http://www.w3.org/2000/svg">
+        <rect width="140" height="79" fill="#1e293b"/>
+        <rect x="10" y="10" width="120" height="59" rx="4" fill="#263347"/>
+        <circle cx="70" cy="34" r="14" fill="#334155"/>
+        <rect x="45" y="54" width="50" height="8" rx="2" fill="#334155"/>
+        ${s.face_detected ? '<circle cx="70" cy="34" r="8" fill="#ef444466"/><circle cx="70" cy="34" r="4" fill="#ef4444"/>' : ''}
+        ${s.keep_reason==='motion' ? '<line x1="10" y1="79" x2="50" y2="20" stroke="#0ea5e9" stroke-width="2" opacity="0.5"/><line x1="30" y1="79" x2="70" y2="15" stroke="#0ea5e9" stroke-width="2" opacity="0.5"/><line x1="50" y1="79" x2="90" y2="25" stroke="#0ea5e9" stroke-width="2" opacity="0.5"/>' : ''}
+        <text x="70" y="40" text-anchor="middle" fill="#64748b" font-size="8" dy="4">frame ${s.frame_index}</text>
+      </svg>
+      <span class="sb-badge ${reasonClass(s.keep_reason)}">${s.keep_reason}</span>
+    </div>
+    <div class="sb-meta">
+      <span class="sb-ts">${s.timestamp_sec}s</span>
+      <span>${s.face_detected ? '👤' : '—'}</span>
+    </div>`;
+  sb.appendChild(card);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FRAME TABLE
+// ─────────────────────────────────────────────────────────────────────────────
+var tbody = document.getElementById('frame-table-body');
+d.segments.forEach(function(s){
+  var tr = document.createElement('tr');
+  var c = reasonColor(s.keep_reason);
+  tr.innerHTML = `
+    <td>${s.frame_index}</td>
+    <td>${s.timestamp_sec}</td>
+    <td><span class="reason-chip" style="background:${c}22;color:${c}">${s.keep_reason.toUpperCase()}</span></td>
+    <td>${s.motion_score.toFixed(4)}</td>
+    <td>${s.phash_similar.toFixed(3)}</td>
+    <td>${s.face_detected ? '✔' : '✘'}</td>`;
+  tbody.appendChild(tr);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MOTION SCORE CHART  (vanilla canvas, no CDN)
+// ─────────────────────────────────────────────────────────────────────────────
+(function(){
+  var canvas = document.getElementById('motionChart');
+  var ratio  = window.devicePixelRatio || 1;
+  var W = canvas.parentElement.clientWidth - 40;
+  var H = 160;
+  canvas.style.width  = W+'px';
+  canvas.style.height = H+'px';
+  canvas.width  = W * ratio;
+  canvas.height = H * ratio;
+  var ctx = canvas.getContext('2d');
+  ctx.scale(ratio, ratio);
+
+  var segs  = d.segments;
+  var data  = segs.map(function(s){ return s.motion_score; });
+  var times = segs.map(function(s){ return s.timestamp_sec; });
+  var colors= segs.map(function(s){ return reasonColor(s.keep_reason); });
+  var maxV  = Math.max(...data, 0.1) * 1.1;
+  var pL=48, pR=10, pT=10, pB=28;
+  var plotW = W-pL-pR, plotH = H-pT-pB;
+
+  // background
+  ctx.fillStyle = '#1a2840'; ctx.fillRect(0,0,W,H);
+
+  // grid lines
+  for(var g=0; g<=4; g++){
+    var gy = pT + plotH - (g/4)*plotH;
+    ctx.strokeStyle='#334155'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pL,gy); ctx.lineTo(pL+plotW,gy); ctx.stroke();
+    ctx.fillStyle='#64748b'; ctx.font='9px sans-serif';
+    ctx.fillText((maxV*g/4).toFixed(3), 2, gy+3);
+  }
+
+  // threshold line
+  var thresh = 0.05;
+  var ty = pT + plotH - (thresh/maxV)*plotH;
+  ctx.save(); ctx.setLineDash([5,4]); ctx.strokeStyle='#f59e0b'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(pL,ty); ctx.lineTo(pL+plotW,ty); ctx.stroke(); ctx.restore();
+  ctx.fillStyle='#f59e0b'; ctx.font='9px sans-serif';
+  ctx.fillText('threshold 0.05', pL+4, ty-3);
+
+  // gradient fill
+  var grad = ctx.createLinearGradient(0, pT, 0, pT+plotH);
+  grad.addColorStop(0,'rgba(14,165,233,0.35)');
+  grad.addColorStop(1,'rgba(14,165,233,0.0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  data.forEach(function(v,i){
+    var x = pL + (i/(data.length-1))*plotW;
+    var y = pT + plotH - (v/maxV)*plotH;
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.lineTo(pL+plotW, pT+plotH); ctx.lineTo(pL, pT+plotH); ctx.closePath(); ctx.fill();
+
+  // line
+  ctx.strokeStyle='#0ea5e9'; ctx.lineWidth=2;
+  ctx.beginPath();
+  data.forEach(function(v,i){
+    var x = pL + (i/(data.length-1))*plotW;
+    var y = pT + plotH - (v/maxV)*plotH;
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // x-axis labels
+  ctx.fillStyle='#64748b'; ctx.font='9px sans-serif'; ctx.textAlign='center';
+  var nticks = 6;
+  for(var t2=0;t2<=nticks;t2++){
+    var xi = Math.floor(t2*(data.length-1)/nticks);
+    var xp = pL + (xi/(data.length-1))*plotW;
+    ctx.fillText(times[xi]+'s', xp, H-8);
+  }
+  ctx.textAlign='left';
+})();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PIE CHART  (vanilla canvas)
+// ─────────────────────────────────────────────────────────────────────────────
+(function(){
+  var canvas = document.getElementById('pieChart');
+  var ratio  = window.devicePixelRatio || 1;
+  var W = canvas.parentElement.clientWidth - 40;
+  var H = 160;
+  canvas.style.width  = W+'px';
+  canvas.style.height = H+'px';
+  canvas.width  = W * ratio;
+  canvas.height = H * ratio;
+  var ctx = canvas.getContext('2d');
+  ctx.scale(ratio, ratio);
+
+  ctx.fillStyle='#1a2840'; ctx.fillRect(0,0,W,H);
+
+  var slices = [
+    { label:'Face',    count: counts.face,    color:'#ef4444' },
+    { label:'Motion',  count: counts.motion,  color:'#0ea5e9' },
+    { label:'Context', count: counts.context, color:'#22c55e' },
+  ];
+  var tot   = slices.reduce(function(a,s){ return a+s.count; }, 0);
+  var cx = W/2 - 40, cy = H/2, r = Math.min(cx, cy) - 10;
+  var start = -Math.PI/2;
+  slices.forEach(function(sl){
+    var angle = (sl.count/tot) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx, cy, r, start, start+angle);
+    ctx.closePath();
+    ctx.fillStyle = sl.color;
+    ctx.fill();
+    ctx.strokeStyle='#0f172a'; ctx.lineWidth=2; ctx.stroke();
+    start += angle;
+  });
+  // donut hole
+  ctx.beginPath(); ctx.arc(cx,cy,r*0.55,0,Math.PI*2);
+  ctx.fillStyle='#1a2840'; ctx.fill();
+  ctx.fillStyle='#e2e8f0'; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
+  ctx.fillText(tot, cx, cy+4);
+  ctx.fillStyle='#94a3b8'; ctx.font='8px sans-serif';
+  ctx.fillText('frames', cx, cy+14);
+  ctx.textAlign='left';
+  // legend
+  var lx = cx + r + 16, ly = cy - 36;
+  slices.forEach(function(sl,i){
+    var y = ly + i*26;
+    ctx.fillStyle = sl.color;
+    ctx.fillRect(lx, y, 12, 12);
+    ctx.fillStyle = '#e2e8f0'; ctx.font='11px sans-serif';
+    ctx.fillText(sl.label, lx+16, y+10);
+    ctx.fillStyle='#94a3b8'; ctx.font='9px sans-serif';
+    ctx.fillText(sl.count+' ('+Math.round(100*sl.count/tot)+'%)', lx+16, y+21);
+  });
+})();
+
+</script>
+</body>
+</html>

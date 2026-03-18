@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "source_video": {
+    "fps": 30.0,
+    "total_frames": 3600,
+    "duration_sec": 120.0,
+    "width": 1280,
+    "height": 720
+  },
+  "compression": {
+    "frames_in": 3600,
+    "frames_out": 486,
+    "reduction_pct": 86.5,
+    "output_fps": 12
+  },
+  "segments": [
+    {
+      "frame_index": 0,
+      "timestamp_sec": 0.0,
+      "keep_reason": "context",
+      "motion_score": 0.0,
+      "phash_similar": 0.0,
+      "face_detected": false
+    },
+    {
+      "frame_index": 47,
+      "timestamp_sec": 1.567,
+      "keep_reason": "face",
+      "motion_score": 0.2134,
+      "phash_similar": 0.4219,
+      "face_detected": true
+    },
+    {
+      "frame_index": 91,
+      "timestamp_sec": 3.033,
+      "keep_reason": "motion",
+      "motion_score": 0.1872,
+      "phash_similar": 0.3750,
+      "face_detected": false
+    },
+    {
+      "frame_index": 183,
+      "timestamp_sec": 6.1,
+      "keep_reason": "context",
+      "motion_score": 0.0312,
+      "phash_similar": 0.9688,
+      "face_detected": false
+    }
+  ]
+}
