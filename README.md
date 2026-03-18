@@ -190,29 +190,23 @@ OUTPUT_FPS                 = 12      # Higher → smoother but larger output
 
 ## Deliverables Checklist
 
-| # | Deliverable | File | Status |
-|---|-------------|------|--------|
-| 1 | Working compression script | `solution.py` | ✅ |
-| 2 | Compressed output video | `compressed_output.mp4` | ✅ (run script) |
-| 3 | Storyboard + size comparison | `compression_report.html` | ✅ (run script) |
-| 4 | Segment log for Sentio Mind | `segments_kept.json` | ✅ (run script) |
-| 5 | Demo screen recording | `demo.mp4` | Record manually |
+| # | Deliverable | File |
+|---|-------------|------|
+| 1 | Working compression script | `solution.py` |
+| 2 | Compressed output video | `compressed_output.mp4` |
+| 3 | Storyboard + size comparison | `compression_report.html` |
+| 4 | Segment log for Sentio Mind | `segments_kept.json` |
+| 5 | Demo screen recording | `demo.mp4` |
 
 ---
 
 ## Rules Compliance
 
-- ✅ `README.md` is the primary documentation
-- ✅ Integration JSON schema not modified
-- ✅ Function signatures in template stubs preserved (`load_video`, `select_keyframes`, `encode_compressed_video`, `extract_intelligent_frames`, `generate_html_report`)
-- ✅ HTML report works offline — zero CDN dependencies, all assets base64-embedded
-- ✅ Python 3.9+ only — no Jupyter notebook
+- `README.md` is the primary documentation
+- Integration JSON schema not modified
+- Function signatures in template stubs preserved (`load_video`, `select_keyframes`, `encode_compressed_video`, `extract_intelligent_frames`, `generate_html_report`)
+- HTML report works offline — zero CDN dependencies, all assets base64-embedded
+- Python 3.9+ only — no Jupyter notebook
 
 ---
 
-## GitHub
-
-Repo: `https://github.com/Sentiodirector/Assignement_Video_compression`
-
-Branch naming: `FirstName_LastName_RollNumber`  
-Push only to your named branch.
